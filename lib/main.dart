@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:audioplayers/audioplayers.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -281,21 +284,113 @@ class HobbyDetailPage extends StatelessWidget {
   }
 }
 
-// ---------------- EXPLORE PAGE ----------------
-class ExplorePage extends StatelessWidget {
+
+class ExplorePage extends StatefulWidget {
   const ExplorePage({super.key});
+
+  @override
+  State<ExplorePage> createState() => _ExplorePageState();
+}
+
+class _ExplorePageState extends State<ExplorePage> {
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  bool _isPlaying = false;
+
+  final List<String> quotes = [
+    "Өнөөдөр сайхан өдөр болно!",
+    "Бүгдийг боломжтой гэж үзээрэй.",
+    "Өөртөө итгээрэй, чадна шүү!",
+    "Бяцхан алхам бүр том үр дүн авчирна.",
+    "Инээмсэглэл таны хамгийн хүчирхэг зэвсэг."
+  ];
+
+  String getRandomQuote() {
+    quotes.shuffle();
+    return quotes.first;
+  }
+
+  void _playSound() async {
+    if (_isPlaying) {
+      await _audioPlayer.stop();
+      setState(() => _isPlaying = false);
+    } else {
+      // Шинэ API-д AssetSource ашиглах
+      await _audioPlayer.play(AssetSource('sounds/chill.mp3'));
+      setState(() => _isPlaying = true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
-        title: const Text('Explore'),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Lottie.asset('assets/explore.json', width: 250, height: 250),
+      body: Stack(
+        children: [
+          // Lottie background
+          Lottie.asset(
+            'assets/sparkles.json',
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          ),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AnimatedTextKit(
+                    animatedTexts: [
+                      RotateAnimatedText(
+                        getRandomQuote(),
+                        textStyle: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      RotateAnimatedText(
+                        getRandomQuote(),
+                        textStyle: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      RotateAnimatedText(
+                        getRandomQuote(),
+                        textStyle: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                    repeatForever: true,
+                  ),
+                  const SizedBox(height: 40),
+                  ElevatedButton.icon(
+                    onPressed: _playSound,
+                    icon: Icon(_isPlaying ? Icons.stop : Icons.play_arrow),
+                    
+                    label: Text(_isPlaying ? 'Зогсоох' : 'Дуут тоглуулах'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      foregroundColor: Colors.white, // ← энэ мөрийг нэмнэ
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                      textStyle: const TextStyle(fontSize: 18),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
