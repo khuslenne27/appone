@@ -25,12 +25,13 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
   assets:
+    - assets/animations/welcome.json
+    - assets/animations/organize.json
+    - assets/animations/start.json
     - assets/loginn.json
-    - assets/hobby.json
-    - assets/Home.json
-    - assets/travel.json
     - assets/write.json
     - assets/music.json
-    - assets/animations/
+    - assets/travel.json
+    - assets/Home.json
+

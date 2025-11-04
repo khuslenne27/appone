@@ -4,24 +4,28 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  final bool seenOnboarding = prefs.getBool('seenOnboarding') ?? false;
+
+  runApp(MyApp(seenOnboarding: seenOnboarding));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool seenOnboarding;
+  const MyApp({super.key, required this.seenOnboarding});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Center(child: Text('Hello World')),
-      ),
+      title: 'Хобби Апп',
+      theme: ThemeData(primarySwatch: Colors.deepPurple),
+      home: seenOnboarding ? const LoginPage() : const OnboardingScreen(),
     );
   }
 }
-
 
 //
 // ---------------- ONBOARDING PAGE ----------------
@@ -31,7 +35,7 @@ class OnboardingScreen extends StatelessWidget {
 
   Future<void> _completeOnboarding(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('seenOnboarding', true);  
+    await prefs.setBool('seenOnboarding', true);
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (_) => const LoginPage()),
     );
@@ -334,7 +338,7 @@ class HobbyDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: color.withValues(alpha: 0.2),
+      backgroundColor: color.withOpacity(0.2),
       appBar: AppBar(
         backgroundColor: color,
         title: Text(title),
