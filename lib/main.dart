@@ -3,6 +3,10 @@ import 'package:lottie/lottie.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:audioplayers/audioplayers.dart'; 
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:audioplayers/audioplayers.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -368,7 +372,7 @@ class HobbyDetailPage extends StatelessWidget {
 //
 // ---------------- EXPLORE PAGE ----------------
 //
-class ExplorePage extends StatelessWidget {
+class ExplorePage extends StatefulWidget {
   const ExplorePage({super.key});
 
   @override
@@ -376,7 +380,7 @@ class ExplorePage extends StatelessWidget {
 }
 
 class _ExplorePageState extends State<ExplorePage> {
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  final AudioPlayer _audioPlayer = AudioPlayer(); // ✅ Fixed type + import
   bool _isPlaying = false;
 
   final List<String> quotes = [
@@ -397,8 +401,7 @@ class _ExplorePageState extends State<ExplorePage> {
       await _audioPlayer.stop();
       setState(() => _isPlaying = false);
     } else {
-      // Шинэ API-д AssetSource ашиглах
-      await _audioPlayer.play(AssetSource('sounds/chill.mp3'));
+      await _audioPlayer.play(AssetSource('sounds/chill.mp3')); // ✅ Correct API for v6.5.1
       setState(() => _isPlaying = true);
     }
   }
@@ -419,7 +422,37 @@ class _ExplorePageState extends State<ExplorePage> {
         centerTitle: true,
       ),
       body: Center(
-        child: Lottie.asset('assets/Home.json', width: 250, height: 250),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Lottie.asset('assets/sparkles.json', width: 250, height: 250),
+            const SizedBox(height: 30),
+            ElevatedButton.icon(
+              onPressed: _playSound,
+              icon: Icon(_isPlaying ? Icons.stop : Icons.play_arrow, color: Colors.white),
+              label: Text(
+                _isPlaying ? 'Зогсоох' : 'Дуу тоглуулах',
+                style: const TextStyle(color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                textStyle: const TextStyle(fontSize: 18),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              getRandomQuote(),
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: Colors.deepPurple,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
