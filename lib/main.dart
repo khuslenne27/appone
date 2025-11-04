@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:introduction_screen/introduction_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,14 +15,81 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Хобби апп',
-      theme: ThemeData(primarySwatch: Colors.deepPurple),
-      home: const LoginPage(),
+      home: Scaffold(
+        body: Center(child: Text('Hello World')),
+      ),
     );
   }
 }
 
+
+//
+// ---------------- ONBOARDING PAGE ----------------
+//
+class OnboardingScreen extends StatelessWidget {
+  const OnboardingScreen({super.key});
+
+  Future<void> _completeOnboarding(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('seenOnboarding', true);  
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => const LoginPage()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IntroductionScreen(
+      globalBackgroundColor: Colors.white,
+      pages: [
+        PageViewModel(
+          title: "Тавтай морил!",
+          body: "AppOne танд өөрийн хоббийг хялбар удирдах боломжийг олгоно.",
+          image: Lottie.asset('assets/animations/welcome.json', width: 250),
+          decoration: _pageDecoration(),
+        ),
+        PageViewModel(
+          title: "Өөрийгөө хөгжүүл",
+          body: "Өдөр бүр шинэ зүйл туршиж, өөрийн сонирхлыг өргөжүүлээрэй.",
+          image: Lottie.asset('assets/animations/organize.json', width: 250),
+          decoration: _pageDecoration(),
+        ),
+        PageViewModel(
+          title: "Бэлэн боллоо!",
+          body: "Хамтдаа AppOne-г туршиж үзье!",
+          image: Lottie.asset('assets/animations/start.json', width: 250),
+          decoration: _pageDecoration(),
+        ),
+      ],
+      showSkipButton: true,
+      skip: const Text("Алгасах", style: TextStyle(fontWeight: FontWeight.bold)),
+      next: const Icon(Icons.arrow_forward),
+      done: const Text("Дуусгах", style: TextStyle(fontWeight: FontWeight.bold)),
+      onDone: () => _completeOnboarding(context),
+      onSkip: () => _completeOnboarding(context),
+      dotsDecorator: const DotsDecorator(
+        size: Size(10.0, 10.0),
+        color: Colors.grey,
+        activeSize: Size(22.0, 10.0),
+        activeShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(25.0)),
+        ),
+        activeColor: Colors.deepPurple,
+      ),
+    );
+  }
+
+  PageDecoration _pageDecoration() => const PageDecoration(
+        titleTextStyle:
+            TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.deepPurple),
+        bodyTextStyle: TextStyle(fontSize: 16),
+        imagePadding: EdgeInsets.all(24),
+      );
+}
+
+//
 // ---------------- LOGIN PAGE ----------------
+//
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -96,7 +165,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
+//
 // ---------------- MAIN PAGE ----------------
+//
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -133,7 +204,9 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
+//
 // ---------------- HOBBY PAGE ----------------
+//
 class HobbyPage extends StatelessWidget {
   const HobbyPage({super.key});
 
@@ -146,7 +219,7 @@ class HobbyPage extends StatelessWidget {
         'page': const HobbyDetailPage(
           title: 'Тэмдэглэл хөтлөх',
           description:
-              'Өдөр бүр бодлоо бичиж үлдээх нь сэтгэл санааг тайвшруулж, өөрийгөө илүү сайн танихад тус болдог',
+              'Өдөр бүр бодлоо бичиж үлдээх нь сэтгэл санааг тайвшруулж, өөрийгөө илүү сайн танихад тус болдог.',
           color: Colors.orangeAccent,
           animation: 'assets/write.json',
         ),
@@ -199,7 +272,9 @@ class HobbyPage extends StatelessWidget {
                         begin: const Offset(1, 0),
                         end: Offset.zero,
                       ).animate(CurvedAnimation(
-                          parent: animation, curve: Curves.easeOutCubic)),
+                        parent: animation,
+                        curve: Curves.easeOutCubic,
+                      )),
                       child: child,
                     );
                   },
@@ -209,7 +284,8 @@ class HobbyPage extends StatelessWidget {
             child: Card(
               margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
+                borderRadius: BorderRadius.circular(20),
+              ),
               elevation: 5,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -221,7 +297,9 @@ class HobbyPage extends StatelessWidget {
                       child: Text(
                         hobby['title'] as String,
                         style: GoogleFonts.poppins(
-                            fontSize: 18, fontWeight: FontWeight.w600),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                     const Icon(Icons.arrow_forward_ios, color: Colors.deepPurple),
@@ -236,7 +314,9 @@ class HobbyPage extends StatelessWidget {
   }
 }
 
+//
 // ---------------- HOBBY DETAIL PAGE ----------------
+//
 class HobbyDetailPage extends StatelessWidget {
   final String title;
   final String description;
@@ -281,7 +361,9 @@ class HobbyDetailPage extends StatelessWidget {
   }
 }
 
+//
 // ---------------- EXPLORE PAGE ----------------
+//
 class ExplorePage extends StatelessWidget {
   const ExplorePage({super.key});
 
@@ -295,7 +377,7 @@ class ExplorePage extends StatelessWidget {
         centerTitle: true,
       ),
       body: Center(
-        child: Lottie.asset('assets/explore.json', width: 250, height: 250),
+        child: Lottie.asset('assets/Home.json', width: 250, height: 250),
       ),
     );
   }
